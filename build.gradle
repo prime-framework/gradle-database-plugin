@@ -1,32 +1,14 @@
+// Project info
+group = "org.primeframework.gradle"
+version = "1.0"
+description = "The Database Plugin"
+
+// Plugins
 apply plugin: "groovy"
 apply plugin: "idea"
 apply plugin: "integration"
 
-group = "org.primeframework.gradle"
-version = "1.0"
-description = "The Database Plugin"
-sourceCompatibility = 1.6
-
-dependencies {
-  compile gradleApi()
-  groovy localGroovy()
-}
-
-jar {
-  manifest {
-    attributes "Implementation-Title": "Database Plugin", "Implementation-Version": version
-  }
-}
-
-task srcJar(type: Jar) {
-  from sourceSets.main.groovy
-  classifier = "sources"
-}
-
-artifacts {
-  archives srcJar
-}
-
+// Build script setup
 buildscript {
   repositories {
     ivy {
@@ -34,6 +16,15 @@ buildscript {
     }
   }
   dependencies {
-    classpath group: "org.primeframework.gradle", name: "gradle-integration-plugin", version: "1.0-SNAPSHOT"
+    classpath group: "org.primeframework.gradle", name: "gradle-integration-plugin", version: "0.1"
   }
 }
+
+// Dependencies
+dependencies {
+  compile gradleApi()
+  groovy localGroovy()
+}
+
+// Java config
+sourceCompatibility = 1.6
