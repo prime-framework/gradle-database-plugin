@@ -39,23 +39,23 @@ class DatabasePlugin implements Plugin<Project> {
     }
 
     project.dependencies {
-      databasePlugin(["postgresql:postgresql:9.1-901-1.jdbc4", "mysql:mysql-connector-java:5.1.18"])
+      databasePlugin(
+        "postgresql:postgresql:9.1-901-1.jdbc4",
+        "mysql:mysql-connector-java:5.1.18"
+      )
     }
 
     project.task("createDatabase") << {
-
       def databaseName = project.database.name
       if (databaseName == null) {
         databaseName = project.name.replace(".", "_").replace("-", "_")
       }
 
       project.database.name = databaseName
-
       setupDb(project, databaseName)
     }
 
     project.task("createDatabaseTest") << {
-
       def databaseTestName = project.database.testName
       if (databaseTestName == null) {
         databaseTestName = project.database.name
@@ -66,13 +66,15 @@ class DatabasePlugin implements Plugin<Project> {
       }
 
       project.database.testName = databaseTestName
-
       setupDb(project, databaseTestName)
+    }
+    
+    project.test {
+      dependsOn project.createDatabaseTest
     }
   }
 
   private void setupDb(Project project, def databaseName) {
-
     String propertyFilePath = "${project.gradle.gradleUserHomeDir}/plugins/database.properties"
 
     def props = loadProperties(propertyFilePath)
@@ -99,9 +101,7 @@ class DatabasePlugin implements Plugin<Project> {
   }
 
   private void createDb(Project project, DbType dbType, def databaseName, def username, def password) {
-
-    if (dbType.equals(mysql)) {
-
+    if (dbType.equals(DbType.mysql)) {
       println "Creating MySQL database [${databaseName}]"
 
       def sql = """
@@ -111,9 +111,8 @@ class DatabasePlugin implements Plugin<Project> {
           GRANT ALL PRIVILEGES on `${databaseName}`.* to '${project.database.username}'@'127.0.0.1' identified by '${project.database.password}';
       """
 
-      executeSQL(mysql, mysql.rootDbName, sql, username, password, true, false)
-    } else if (dbType.equals(postgresql)) {
-
+      executeSQL(DbType.mysql, DbType.mysql.rootDbName, sql, username, password, true, false)
+    } else if (dbType.equals(DbType.postgresql)) {
       println "Creating PostgreSQL database [${databaseName}]"
 
       def sql = """
@@ -122,7 +121,7 @@ class DatabasePlugin implements Plugin<Project> {
         GRANT ALL PRIVILEGES ON DATABASE ${databaseName} TO ${project.database.username};
       """
 
-      executeSQL(postgresql, postgresql.rootDbName, sql, username, password, true, false)
+      executeSQL(DbType.postgresql, DbType.postgresql.rootDbName, sql, username, password, true, false)
     }
   }
 
@@ -147,10 +146,9 @@ class DatabasePlugin implements Plugin<Project> {
  */
   public void executeSQLFile(def dbType, def db, def file, def username, def password, boolean autocommit,
                              boolean expandProperties) {
-
     def url = "jdbc:$dbType://localhost:$dbType.port/$db"
 
-    println "$dbType:$db < $file"
+    println "Executing sql $dbType:$db < $file"
 
     project.ant.sql(
       src: file,
@@ -176,10 +174,9 @@ class DatabasePlugin implements Plugin<Project> {
  */
   public void executeSQL(def dbType, def db, def sql, def username, def password, boolean autocommit,
                          boolean expandProperties) {
-
     def url = "jdbc:$dbType://localhost:$dbType.port/$db"
 
-    println "$dbType:$db < [$sql]"
+    println "Creating database $dbType:$db"
 
     project.ant.sql(
       sql,
