@@ -16,7 +16,9 @@ buildscript {
     }
   }
   dependencies {
-    classpath group: "org.primeframework.gradle", name: "gradle-integration-plugin", version: "0.1"
+    classpath(
+      "org.primeframework.gradle:gradle-integration-plugin:0.1"
+    )
   }
 }
 
