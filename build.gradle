@@ -1,0 +1,39 @@
+apply plugin: "groovy"
+apply plugin: "idea"
+apply plugin: "integration"
+
+group = "org.primeframework.gradle"
+version = "1.0"
+description = "The Database Plugin"
+sourceCompatibility = 1.6
+
+dependencies {
+  compile gradleApi()
+  groovy localGroovy()
+}
+
+jar {
+  manifest {
+    attributes "Implementation-Title": "Database Plugin", "Implementation-Version": version
+  }
+}
+
+task srcJar(type: Jar) {
+  from sourceSets.main.groovy
+  classifier = "sources"
+}
+
+artifacts {
+  archives srcJar
+}
+
+buildscript {
+  repositories {
+    ivy {
+      url "${project.gradle.gradleUserHomeDir}/integration-cache"
+    }
+  }
+  dependencies {
+    classpath group: "org.primeframework.gradle", name: "gradle-integration-plugin", version: "1.0-SNAPSHOT"
+  }
+}
