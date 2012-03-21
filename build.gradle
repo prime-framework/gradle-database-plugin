@@ -1,6 +1,6 @@
 // Project info
 group = "org.primeframework.gradle"
-version = "1.0"
+version = "0.1"
 description = "The Database Plugin"
 
 // Plugins
