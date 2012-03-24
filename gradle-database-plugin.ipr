@@ -38,7 +38,7 @@
         <entry key="gradle-database-plugin" value="true" />
       </map>
     </option>
-    <option name="gradleHome" value="/usr/local/gradle" />
+    <option name="gradleHome" value="$GRADLE_HOME$" />
     <option name="linkedProjectPath" value="$PROJECT_DIR$/build.gradle" />
   </component>
   <component name="GradleUISettings">
