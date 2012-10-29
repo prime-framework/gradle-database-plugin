@@ -172,6 +172,35 @@ class DatabasePlugin implements Plugin<Project> {
  * @param db the db
  * @param file the file to execute
  */
+  public void executeSQLFileWithDelimiter(def dbType, def db, def file, def username, def password, boolean autocommit,
+                             boolean expandProperties, def delimiter) {
+    def url = "jdbc:$dbType://localhost:$dbType.port/$db"
+
+    println "Executing sql $dbType:$db < $file"
+
+    project.ant.sql(
+      src: file,
+      driver: dbType.driver,
+      url: url,
+      userid: username,
+      password: password,
+      autocommit: autocommit,
+      expandproperties: expandProperties,
+      delimiter: delimiter) {
+
+      classpath {
+        pathElement(path: project.configurations.databasePlugin.asPath)
+      }
+    }
+  }
+
+/**
+ * Helper method for executing sql files
+ *
+ * @param dbType the database type
+ * @param db the db
+ * @param file the file to execute
+ */
   public void executeSQL(def dbType, def db, def sql, def username, def password, boolean autocommit,
                          boolean expandProperties) {
     def url = "jdbc:$dbType://localhost:$dbType.port/$db"
