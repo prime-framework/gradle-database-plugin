@@ -89,11 +89,8 @@ class DatabasePlugin implements Plugin<Project> {
       def username = props["${dbType}.db.username"]
       def password = props["${dbType}.db.password"]
       if (username == null || password == null) {
-        throw new GradleException("You must create a file named ${propertyFilePath} and add two properties " +
-          "to it. The [" + dbType + ".db.username] property should contain the superuser username for your " +
-          "database instance. The [" + dbType + ".db.password] property should contain the superuser password. " +
-          "Each database might have different setup for this and you should consult the " +
-          "database documentation to determine how to setup the superuser (sometimes called the root user).")
+        throw new GradleException("The file ${propertyFilePath} exists but appears to be missing the two properties " +
+          "[${dbType}.db.username] and [${dbType}.db.password]. These are the username and password for the ${dbType} database.")
       }
 
       createDb(project, dbType, databaseName, username, password)
@@ -132,6 +129,9 @@ class DatabasePlugin implements Plugin<Project> {
       f.withReader { reader ->
         props.load(reader);
       }
+    } else {
+      fail("You must create a file named ${propertyFilePath}. This file will store the username and password for your " +
+        "databases. It is currently missing.")
     }
 
     return props
@@ -157,6 +157,7 @@ class DatabasePlugin implements Plugin<Project> {
       userid: username,
       password: password,
       autocommit: autocommit,
+      encoding: "UTF-8",
       expandproperties: expandProperties) {
 
       classpath {
@@ -185,6 +186,7 @@ class DatabasePlugin implements Plugin<Project> {
       userid: username,
       password: password,
       autocommit: autocommit,
+      encoding: "UTF-8",
       expandproperties: expandProperties,
       delimiter: delimiter) {
 
@@ -214,6 +216,7 @@ class DatabasePlugin implements Plugin<Project> {
       userid: username,
       password: password,
       autocommit: autocommit,
+      encoding: "UTF-8",
       expandproperties: expandProperties) {
 
       classpath {
